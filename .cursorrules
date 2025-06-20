@@ -1,0 +1,5 @@
+- This is the Next.js 15 project using the latest version of Next.js
+- This project is using the tailwindcss for styling
+- This project is using the shadcn/ui for components
+
+- Every single time we new to run a shadcn command, use `npx shadcn@latest`
