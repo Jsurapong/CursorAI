@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
 import {
   Select,
@@ -15,12 +16,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { MoreHorizontal } from "lucide-react";
+import { MoreVertical } from "lucide-react";
 import { Button } from "./ui/button";
-import { useState } from "react";
 import { TaskDialog } from "./task-dialog";
+import { TEAM_MEMBERS } from "@/data/team";
 
 interface TaskCardProps {
+  id: string;
   title: string;
   description?: string;
   assignee?: {
@@ -29,20 +31,11 @@ interface TaskCardProps {
     avatar?: string;
   };
   onAssigneeChange?: (userId: string) => void;
-  onTaskUpdate?: (data: {
-    title: string;
-    description?: string;
-    assigneeId?: string;
-  }) => void;
+  onTaskUpdate?: (taskId: string, values: any) => void;
 }
 
-const TEAM_MEMBERS = [
-  { id: "1", name: "John Doe", avatar: "/avatars/john.png" },
-  { id: "2", name: "Jane Smith", avatar: "/avatars/jane.png" },
-  { id: "3", name: "Mike Johnson", avatar: "/avatars/mike.png" },
-];
-
 export function TaskCard({
+  id,
   title,
   description,
   assignee,
@@ -96,7 +89,7 @@ export function TaskCard({
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="h-8 w-8 p-0">
-                    <MoreHorizontal className="h-4 w-4" />
+                    <MoreVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -124,7 +117,7 @@ export function TaskCard({
           assignee,
         }}
         onSubmit={(data) => {
-          onTaskUpdate?.(data);
+          onTaskUpdate?.(id, data);
           setIsEditDialogOpen(false);
         }}
       />
