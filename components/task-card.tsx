@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
 import {
   Select,
@@ -16,13 +15,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { MoreVertical } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import { Button } from "./ui/button";
+import { useState } from "react";
 import { TaskDialog } from "./task-dialog";
-import { TEAM_MEMBERS } from "@/data/team";
+import { assignees } from "@/lib/data/assignees";
 
 interface TaskCardProps {
-  id: string;
   title: string;
   description?: string;
   assignee?: {
@@ -31,18 +30,23 @@ interface TaskCardProps {
     avatar?: string;
   };
   onAssigneeChange?: (userId: string) => void;
-  onTaskUpdate?: (taskId: string, values: any) => void;
+  onTaskUpdate?: (data: {
+    title: string;
+    description?: string;
+    assigneeId?: string;
+  }) => void;
 }
 
 export function TaskCard({
-  id,
   title,
   description,
-  assignee,
+  assignee: assigneeProp,
   onAssigneeChange,
   onTaskUpdate,
 }: TaskCardProps) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
+  const assignee = assignees.find((a) => a.id === assigneeProp?.id);
 
   return (
     <>
@@ -57,13 +61,8 @@ export function TaskCard({
                     {assignee && (
                       <div className="flex items-center gap-2">
                         <Avatar className="h-6 w-6">
-                          <AvatarImage
-                            src={assignee.avatar}
-                            alt={assignee.name}
-                          />
-                          <AvatarFallback>
-                            {assignee.name.slice(0, 2).toUpperCase()}
-                          </AvatarFallback>
+                          <AvatarImage src={assignee?.avatarUrl} />
+                          <AvatarFallback>{assignee?.name[0]}</AvatarFallback>
                         </Avatar>
                         <span className="truncate">{assignee.name}</span>
                       </div>
@@ -71,11 +70,14 @@ export function TaskCard({
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {TEAM_MEMBERS.map((member) => (
+                  {assignees.map((member) => (
                     <SelectItem key={member.id} value={member.id}>
                       <div className="flex items-center gap-2">
                         <Avatar className="h-6 w-6">
-                          <AvatarImage src={member.avatar} alt={member.name} />
+                          <AvatarImage
+                            src={member.avatarUrl}
+                            alt={member.name}
+                          />
                           <AvatarFallback>
                             {member.name.slice(0, 2).toUpperCase()}
                           </AvatarFallback>
@@ -89,7 +91,7 @@ export function TaskCard({
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="h-8 w-8 p-0">
-                    <MoreVertical className="h-4 w-4" />
+                    <MoreHorizontal className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -117,7 +119,7 @@ export function TaskCard({
           assignee,
         }}
         onSubmit={(data) => {
-          onTaskUpdate?.(id, data);
+          onTaskUpdate?.(data);
           setIsEditDialogOpen(false);
         }}
       />
