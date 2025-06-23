@@ -1,0 +1,4 @@
+You have remove the light/dark mode toggling. please bring it back Make sure you use the existing components.
+
+
+@theme-provider.tsx and @theme-toggle.tsx
