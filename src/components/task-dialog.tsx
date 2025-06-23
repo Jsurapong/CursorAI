@@ -3,14 +3,13 @@
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
-} from "./ui/dialog";
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -18,29 +17,18 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./ui/form";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-import { Textarea } from "./ui/textarea";
+} from "@/components/ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-
-// This should match your TaskCardProps interface
-interface Task {
-  title: string;
-  description?: string;
-  assignee?: {
-    id: string;
-    name: string;
-    avatar?: string;
-  };
-}
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const TEAM_MEMBERS = [
   { id: "1", name: "John Doe", avatar: "/avatars/john.png" },
@@ -49,55 +37,62 @@ const TEAM_MEMBERS = [
 ];
 
 const taskFormSchema = z.object({
-  title: z
-    .string()
-    .min(1, "Title is required")
-    .max(100, "Title must be less than 100 characters"),
-  description: z
-    .string()
-    .max(500, "Description must be less than 500 characters")
-    .optional(),
+  title: z.string().min(1, "Title is required"),
+  description: z.string().optional(),
   assigneeId: z.string().optional(),
 });
 
 type TaskFormValues = z.infer<typeof taskFormSchema>;
 
 interface TaskDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  task?: Task;
-  onSubmit: (values: TaskFormValues) => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  initialData?: {
+    title: string;
+    description?: string;
+    assignee?: {
+      id: string;
+      name: string;
+      avatar?: string;
+    };
+  };
+  onSubmit: (data: TaskFormValues) => void;
+  trigger?: React.ReactNode;
 }
 
 export function TaskDialog({
   open,
   onOpenChange,
-  task,
+  initialData,
   onSubmit,
+  trigger,
 }: TaskDialogProps) {
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(taskFormSchema),
     defaultValues: {
-      title: task?.title || "",
-      description: task?.description || "",
-      assigneeId: task?.assignee?.id || "",
+      title: initialData?.title || "",
+      description: initialData?.description || "",
+      assigneeId: initialData?.assignee?.id,
     },
   });
 
-  const handleSubmit = (values: TaskFormValues) => {
-    onSubmit(values);
-    onOpenChange(false);
-    form.reset();
-  };
+  function handleSubmit(data: TaskFormValues) {
+    onSubmit(data);
+    onOpenChange?.(false);
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
+      {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{task ? "Edit Task" : "Create Task"}</DialogTitle>
+          <DialogTitle>{initialData ? "Edit Task" : "Create Task"}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-4"
+          >
             <FormField
               control={form.control}
               name="title"
@@ -105,12 +100,13 @@ export function TaskDialog({
                 <FormItem>
                   <FormLabel>Title</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter task title" {...field} />
+                    <Input placeholder="Task title" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="description"
@@ -119,7 +115,7 @@ export function TaskDialog({
                   <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Enter task description"
+                      placeholder="Task description"
                       className="resize-none"
                       {...field}
                     />
@@ -128,6 +124,7 @@ export function TaskDialog({
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="assigneeId"
@@ -140,7 +137,7 @@ export function TaskDialog({
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Assign to..." />
+                        <SelectValue placeholder="Select assignee" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -166,14 +163,13 @@ export function TaskDialog({
                 </FormItem>
               )}
             />
-            <DialogFooter>
-              <Button type="submit">
-                {task ? "Save Changes" : "Create Task"}
-              </Button>
-            </DialogFooter>
+
+            <Button type="submit" className="w-full">
+              {initialData ? "Save Changes" : "Create Task"}
+            </Button>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
   );
-} 
+}
