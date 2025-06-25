@@ -14,6 +14,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
 } from "./ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "./ui/button";
@@ -22,6 +25,7 @@ import { TaskDialog } from "./task-dialog";
 import { assignees } from "@/lib/data/assignees";
 import { TaskFormValues } from "@/lib/schemas";
 import { deleteTask } from "@/lib/actions/task";
+import { Column } from "@/lib/db/schema";
 
 interface TaskCardProps {
   id: number;
@@ -35,6 +39,7 @@ interface TaskCardProps {
   };
   onAssigneeChange?: (userId: string) => void;
   onTaskUpdate?: (data: TaskFormValues) => void;
+  availableColumns: Column[];
 }
 
 export function TaskCard({
@@ -45,6 +50,7 @@ export function TaskCard({
   assignee: assigneeProp,
   onAssigneeChange,
   onTaskUpdate,
+  availableColumns,
 }: TaskCardProps) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
@@ -108,7 +114,19 @@ export function TaskCard({
                   <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>
                     Edit
                   </DropdownMenuItem>
-                  <DropdownMenuItem 
+                  {availableColumns.length > 0 && (
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger>Move to</DropdownMenuSubTrigger>
+                      <DropdownMenuSubContent>
+                        {availableColumns.map((column) => (
+                          <DropdownMenuItem key={column.id}>
+                            {column.title}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuSubContent>
+                    </DropdownMenuSub>
+                  )}
+                  <DropdownMenuItem
                     onClick={handleDelete}
                     className="text-destructive"
                   >
@@ -128,8 +146,8 @@ export function TaskCard({
 
       <TaskDialog
         mode="edit"
-        taskId={id}
         columnId={columnId}
+        taskId={id}
         defaultValues={{
           title,
           description: description || "",

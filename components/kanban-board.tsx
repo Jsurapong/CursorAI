@@ -18,6 +18,7 @@ export   async function KanbanBoard() {
                 columnId={column.id}
                 id={task.id}
                 description={task.description}
+                availableColumns={columns.filter((c) => c.id !== column.id)}
                 assignee={
                   task.assigneeId
                     ? {
