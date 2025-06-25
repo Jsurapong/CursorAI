@@ -1,0 +1,2 @@
+Now add edit form for columns, modifying @column-dialog.tsx using @Forms & Frontend Add commentMore actions
+Add an action that saves changes, using @Creating Server Actions 
