@@ -1,0 +1,3 @@
+When this change was made, I see this error in the browser:Add commentMore actions
+
+Invalid prop `type` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props.
