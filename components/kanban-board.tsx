@@ -16,6 +16,7 @@ export   async function KanbanBoard() {
                 key={task.id}
                 title={task.title}
                 columnId={column.id}
+                id={task.id}
                 description={task.description}
                 assignee={
                   task.assigneeId
