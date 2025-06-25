@@ -113,6 +113,7 @@ export function TaskCard({
 
       <TaskDialog
         mode="edit"
+        taskId={id}
         columnId={columnId}
         defaultValues={{
           title,
