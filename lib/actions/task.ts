@@ -114,7 +114,7 @@ export async function deleteTask(taskId: number) {
   }
 }
 
-export async function moveTask(taskId: number, targetColumnId: number) {Add commentMore actions
+export async function moveTask(taskId: number, targetColumnId: number) {
   try {
     // Get the max order in target column
     const [maxOrder] = await db
