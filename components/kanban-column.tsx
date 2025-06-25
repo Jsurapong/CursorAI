@@ -11,8 +11,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "./ui/alert-dialog";
 import { deleteColumn } from "@/lib/actions/columns";
+import { useState } from "react";
 
 interface KanbanColumnProps {
   title: string;
@@ -21,6 +31,8 @@ interface KanbanColumnProps {
 }
 
 export function KanbanColumn({ title, children, columnId }: KanbanColumnProps) {
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+
   return (
     <Card className="w-full min-w-[320px] max-w-[400px]">
       <CardHeader className="p-4">
@@ -58,17 +70,37 @@ export function KanbanColumn({ title, children, columnId }: KanbanColumnProps) {
                 />
                 <DropdownMenuItem
                   className="text-red-600"
-                  onClick={() => deleteColumn(columnId)}
+                  onClick={() => setShowDeleteAlert(true)}
                 >
                   Delete Column
                 </DropdownMenuItem>
               </DropdownMenuContent>
-              
             </DropdownMenu>
           </div>
         </div>
         {children}
       </CardContent>
+
+      <AlertDialog open={showDeleteAlert} onOpenChange={setShowDeleteAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete the column "{title}" and all its
+              tasks. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteColumn(columnId)}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 }
