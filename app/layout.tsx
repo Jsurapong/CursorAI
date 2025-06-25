@@ -1,19 +1,14 @@
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import "./globals.css";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const inter = Inter({ subsets: ["latin"] });
-
-export const metadata: Metadata = {
-  title: "Team Tasks",
-  description: "Manage your team tasks efficiently",
-};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -24,6 +19,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <header className="border-b">
+            <div className="container flex items-center justify-between py-4">
+              <ThemeToggle />
+            </div>
+          </header>
           {children}
         </ThemeProvider>
       </body>
